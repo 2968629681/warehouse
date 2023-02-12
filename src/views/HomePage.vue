@@ -15,15 +15,15 @@
         </el-descriptions>
         <div>
           <img src="../assets/入库.png" class="tiao" @click="put">
-          <img src="../assets/入库.png" class="tiao" @click="out">
+          <img src="../assets/出库.png" class="tiao" @click="out">
         </div>
         <div>
-          <img src="../assets/入库.png" class="tiao" @click="mate">
-          <img src="../assets/入库.png" class="tiao" @click="queryone">
+          <img src="../assets/物料.png" class="tiao" @click="mate">
+          <img src="../assets/单品.png" class="tiao" @click="queryone">
         </div>
         <div>
-          <img src="../assets/入库.png" class="tiao" @click="querytime">
-          <img src="../assets/入库.png" v-if="user == 'true'"  class="tiao" @click="sys">
+          <img src="../assets/时间.png" class="tiao" @click="querytime">
+          <img src="../assets/系统.png" v-if="user == 'true'"  class="tiao" @click="sys">
         </div>
         <div></div>
       </el-main>
@@ -98,5 +98,7 @@ export default {
 }
 .tiao{
   margin: 20px;
+  width: 470px;
+  height: 130px;
 }
 </style>
