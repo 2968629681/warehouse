@@ -162,6 +162,7 @@
     },
     watch: {
       tableData(newvalue){
+        this.wu_name=[]; //this.wu_name重置 消去之前值的影响
         if (newvalue) {
           var sum=0
           for (let index = 0; index < newvalue.length; index++) {
@@ -200,7 +201,6 @@
                 }
               }
               this.all=this.all_in+this.all_number-this.all_out
-              this.wu_name=[] //重置wu_name
             }
         }
       }
@@ -227,6 +227,7 @@
           headers: { 'Authorization': localStorage.getItem('auth') }
 
         }).then(res =>{
+          this.wu_name=[]; //this.wu_name重置 消去之前值的影响
           that.getSearchInfo = res.data.details
           if (res.data.details) {
             for (let index = 0; index < res.data.details.length; index++) {
@@ -271,13 +272,13 @@
               }
             }//wu_name去重
             for (let j = 0; j < this.wu_name.length; j++){
-              for (let index = 1; index < res.data.items.length; index++) {
+              for (let index = 0; index < res.data.items.length; index++) {
                 if (this.wu_name[j] ==  res.data.items[index].item_name) {
                   that.all_number = that.all_number+parseInt(res.data.items[index].open_number)
                 }
               }
-              that.all=that.all_in+that.all_number-that.all_out
             }
+            that.all=that.all_in+that.all_number-that.all_out
           }
           else{
             that.all=0
@@ -285,7 +286,6 @@
             that.all_number=0
             that.all_out=0
           }
-          this.wu_name=[]; //this.wu_name重置 方便下一次计算
         }).catch()
       }
     }
