@@ -218,6 +218,17 @@
       handleSizeChange1(psize) {
         this.pagesize1 = psize
       },
+      timestampToTime(timestamp) {
+        timestamp = parseInt(timestamp)
+        var date = new Date(timestamp) //时间戳为10位需*1000，时间戳为13位的话不需乘1000
+        var Y = date.getFullYear() + '-'
+        var M =
+          (date.getMonth() + 1 < 10
+            ? '0' + (date.getMonth() + 1)
+            : date.getMonth() + 1) + '-'
+        var D = date.getDate()
+        return Y + M + D
+      },
       info() { // 获取信息
         var that = this
         // 入库
@@ -234,6 +245,9 @@
                 that.all_in = that.all_in+parseInt(res.data.details[index].number)
                 that.wu_name.push(res.data.details[index].item_name)
               }
+            for (let item of that.getSearchInfo) {
+              item.timestamp = this.timestampToTime(item.timestamp)
+            }
           }
         }).catch(() =>{
         })
@@ -249,7 +263,10 @@
             for (let index = 0; index < res.data.details.length; index++) {
                 that.all_out = that.all_out+parseInt(res.data.details[index].number)
                 that.wu_name.push(res.data.details[index].item_name)
-              }
+            }
+            for (let item of that.getSearchInfo1) {
+              item.timestamp = this.timestampToTime(item.timestamp)
+            }
           }
         }).catch(() =>{
         })

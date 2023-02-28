@@ -260,7 +260,10 @@
               var put=0
               for (let index = 0; index < that.getSearchInfo.length; index++) {
                 put = put + parseInt(that.getSearchInfo[index].number)
-              } 
+              }
+              for (let item of that.getSearchInfo) {
+                item.timestamp = this.timestampToTime(item.timestamp)
+              }
               that.all_innumber=put
             }
             if(res.data.outbound == null){
@@ -274,6 +277,9 @@
               var out=0
               for (let index = 0; index < that.getSearchInfo1.length; index++) {
                 out = out + parseInt(that.getSearchInfo1[index].number)
+              }
+              for (let item of that.getSearchInfo1) {
+                item.timestamp = this.timestampToTime(item.timestamp)
               }
               that.all_outnumber=out
             }
