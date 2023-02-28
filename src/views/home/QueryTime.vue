@@ -182,6 +182,18 @@
       handleSizeChange1(psize) {
         this.pagesize1 = psize
       },
+      // 时间戳转换
+      timestampToTime(timestamp) {
+        timestamp = parseInt(timestamp)
+        var date = new Date(timestamp) //时间戳为10位需*1000，时间戳为13位的话不需乘1000
+        var Y = date.getFullYear() + '-'
+        var M =
+          (date.getMonth() + 1 < 10
+            ? '0' + (date.getMonth() + 1)
+            : date.getMonth() + 1) + '-'
+        var D = date.getDate()
+        return Y + M + D
+      },
       info() { // 获取信息
         var that = this
         this.$axios({
@@ -190,8 +202,16 @@
           headers: { 'Authorization': localStorage.getItem('auth') }
 
         }).then(res =>{
-          that.getSearchInfo = res.data.items
-          that.all_in=res.data.items.length
+          that.getSearchInfo = res.data.details
+          for (let item of that.getSearchInfo) {
+            item.timestamp = this.timestampToTime(item.timestamp)
+          }
+          that.all_in=res.data.details.length
+          var put=0
+          for (let index = 0; index < that.getSearchInfo.length; index++) {
+            put = put + parseInt(that.getSearchInfo[index].number)
+          } 
+          that.all_innumber=put
         }).catch(() =>{
         })
         // 出库
@@ -201,28 +221,24 @@
           headers: { 'Authorization': localStorage.getItem('auth') }
 
           }).then(res =>{
-            that.getSearchInfo1 = res.data.items
-            that.all_out=res.data.items.length
+            that.getSearchInfo1 = res.data.details
+            for (let item of that.getSearchInfo1) {
+              item.timestamp = this.timestampToTime(item.timestamp)
+            }
+            that.all_out=res.data.details.length
+            var out=0
+            for (let index = 0; index < that.getSearchInfo1.length; index++) {
+              out = out + parseInt(that.getSearchInfo1[index].number)
+            }
+            that.all_outnumber=out
           }).catch(() =>{
         })
-        // 物料看总出库和入库
-        this.$axios({
-          method: 'get',
-          url:"/api/item/get",
-          headers: { 'Authorization': localStorage.getItem('auth') }
-
-        }).then(res =>{
-          for (let index = 1; index < res.data.items.length; index++) {
-            that.all_innumber = that.all_innumber+parseInt(res.data.items[index].in_number)
-            that.all_outnumber = that.all_outnumber+parseInt(res.data.items[index].out_number)
-          }
-        }).catch()
       },
       sear(){
         var st=''
         var ed=''
-        st = this.value1[0]/1000 +''
-        ed = this.value1[1]/1000 +''
+        st = this.value1[0] +''
+        ed = this.value1[1] +''
         var that = this
         this.$axios({
           method: 'post',
