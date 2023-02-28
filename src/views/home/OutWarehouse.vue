@@ -6,7 +6,7 @@
           <div style="display:inline-block;margin-left: 280px;">
               <el-input v-model="searchTableInfo" prefix-icon="el-icon-search" placeholder="请输入搜索内容"
                       style="width:240px;display:inline-block;margin-left: -130px;"/>
-              <el-button type="primary" @click="dialogFormVisible = true" style="margin-left:720px;display:inline-block">新增入库</el-button>
+              <el-button type="primary" @click="dialogFormVisible = true" style="margin-left:720px;display:inline-block">新增出库</el-button>
               <el-table
               :data="tableData==null?tableData:tableData.slice((currpage - 1) * pagesize, currpage * pagesize)"
               style="width: 1500px;display:inline-block;margin-left: -130px;"
@@ -58,7 +58,7 @@
                 <el-date-picker
                   v-model="value_time"
                   type="date"
-                  value-format="yyyy-MM-dd"
+                  value-format="timestamp"
                   placeholder="选择日期">
                 </el-date-picker>
               </div>
@@ -305,8 +305,7 @@
                 type: 'success',
                 message: '删除成功!'
               });
-          }).catch((err) =>{
-            console.log(err);
+          }).catch(() =>{
             this.$message({
                 type: 'error',
                 message: '删除失败!'
