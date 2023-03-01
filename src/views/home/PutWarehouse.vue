@@ -189,7 +189,6 @@ export default {
         headers: { 'Authorization': localStorage.getItem('auth') }
 
       }).then(res =>{
-        console.log(res.data);
         that.getSearchInfo = res.data.details
         for (let item of that.getSearchInfo) {
           item.timestamp = this.timestampToTime(item.timestamp)
@@ -316,8 +315,7 @@ export default {
                 type: 'success',
                 message: '删除成功!'
               });
-          }).catch((err) =>{
-            console.log(err);
+          }).catch(() =>{
             this.$message({
                 type: 'error',
                 message: '删除失败!'
