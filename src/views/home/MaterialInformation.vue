@@ -281,8 +281,7 @@
                 type: 'success',
                 message: '新增物料信息成功!'
               });
-            }).catch((err) => {
-              console.log(err);
+            }).catch(() => {
               this.$message({
               message: '新增物料信息失败,请检查网络',
               type: 'error'
@@ -311,8 +310,6 @@
       },
       deleteRow(index,rows){
         var index1=rows[index].ID
-        console.log(index1);
-        console.log(typeof index1);
         this.$confirm('是否确认删除该条出库信息, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -322,15 +319,13 @@
           method: 'delete',
           url:"/api/item/delete",
           headers: { 'Authorization': localStorage.getItem('auth')},
-          params:{id:index1}}).then((res) =>{
-            console.log(res);
+          params:{id:index1}}).then(() =>{
             rows.splice(index, 1);
             this.$message({
                 type: 'success',
                 message: '删除成功!'
               });
-          }).catch((err) =>{
-            console.log(err);
+          }).catch(() =>{
             this.$message({
                 type: 'error',
                 message: '删除失败!'

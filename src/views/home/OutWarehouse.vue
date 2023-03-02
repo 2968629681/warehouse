@@ -188,7 +188,6 @@
         }).then(res =>{
           that.getSearchInfo = res.data.details
           for (let item of that.getSearchInfo) {
-            console.log(item);
             item.timestamp = this.timestampToTime(item.timestamp)
           }
         }).catch(() =>{
