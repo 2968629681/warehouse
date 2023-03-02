@@ -7,7 +7,7 @@ import 'element-ui/lib/theme-chalk/index.css';
 import 'default-passive-events'
 Vue.use(ElementUI);
 
-axios.defaults.baseURL='http://management.niuwx.cn'
+axios.defaults.baseURL='https://management.niuwx.cn'
 Vue.prototype.$axios = axios;
 
 Vue.config.productionTip = false

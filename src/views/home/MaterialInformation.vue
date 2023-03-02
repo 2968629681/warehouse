@@ -164,7 +164,7 @@
     },
     methods: {
       tableRowClassName({row}) {
-        if (row.warn_number>row.number) {
+        if (parseInt(row.warn_number)>parseInt(row.number)) {
           return 'warning-row';
         }
         return '';

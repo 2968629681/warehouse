@@ -183,8 +183,8 @@
           }
 
           this.all_out=out
-          this.all_number=0
-          this.all=0
+          var a_all=0
+          var a_all_number=0
 
           for(var i=0;i<this.wu_name.length;i++){
               for(var j=i+1;j<this.wu_name.length;j++){
@@ -194,14 +194,17 @@
                 }
               }
             }//wu_name去重
+
           for (let j = 0; j < this.wu_name.length; j++){
-              for (let index = 1; index < this.wu.length; index++) {
+              for (let index = 0; index < this.wu.length; index++) {
                 if (this.wu_name[j] ==  this.wu[index].item_name) {
-                  this.all_number = this.all_number+parseInt(this.wu[index].open_number)
+                  a_all_number = a_all_number+parseInt(this.wu[index].open_number)
                 }
               }
-              this.all=this.all_in+this.all_number-this.all_out
+              a_all=this.all_in+a_all_number-this.all_out
             }
+            this.all_number = a_all_number
+            this.all = a_all
         }
       }
     },
