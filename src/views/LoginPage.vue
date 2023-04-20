@@ -23,14 +23,13 @@
         </el-form-item>
       </el-form>
       <el-button type="primary" @click="en">登录</el-button>
-      <el-button type="text" @click="retrieve = false">注册账号</el-button>
+      <!--<el-button type="text" @click="retrieve = false">注册账号</el-button>-->
     </div>
     <retrievePassword v-else v-on:isshow="retrieve = true"></retrievePassword>
   </div>
 </template>
 <script>
 import retrievePassword from "../components/retrievePassword.vue"
-
 export default {
   components: {
     retrievePassword
@@ -69,20 +68,26 @@ export default {
       }).then(res=>{
         if(that.ruleForm.username == 'admin') 
         {
-          localStorage.user = true
+          this.$store.commit('isAdmin')
+          //console.log(this.$store.state.user);
+          //localStorage.user = true
         }
-        else  localStorage.user =''
-        localStorage.auth=res.data.token
-        this.$router.replace({
-          name:'home'
-        })
-      })
-      .catch(()=>{
+        //else  localStorage.user =''
+        localStorage.auth=res.data.token;
+        if (res.data.code==200){
+          this.$router.replace({
+            name:'home'
+          })
+        }else{
+
         this.loading = false
         this.notifyId = this.$notify({
         message: "密码错误，请重新登入或者请检查网络问题",
         duration: 2000
       })
+        }
+      })
+      .catch(()=>{
      });     
     }
   },

@@ -1,117 +1,90 @@
 <template>
+  <div>
+    <headbar></headbar>
+    <sidebar style="position:absolute"></sidebar>
     <div>
-        <headbar></headbar>
-        <sidebar  style="position:absolute"></sidebar>
-        <div>
-          <div style="display:inline-block;margin-left: 280px;">
-              <el-input v-model="searchTableInfo" prefix-icon="el-icon-search" placeholder="请输入搜索内容"
-                      style="width:240px;display:inline-block;margin-left: -130px;"/>
-              <el-button type="primary" @click="dialogFormVisible = true" style="margin-left:720px;display:inline-block">新增出库</el-button>
-              <el-table
-              :data="tableData==null?tableData:tableData.slice((currpage - 1) * pagesize, currpage * pagesize)"
-              style="width: 1500px;display:inline-block;margin-left: -130px;"
-              max-height="740">
-              <el-table-column prop="timestamp" label="日期"/>
-              <el-table-column prop="item_id" label="物料编号"/>
-              <el-table-column prop="item_name" label="物料名称"/>
-              <el-table-column prop="specification" label="规格型号"/>
-              <el-table-column prop="unit" label="计量单位"/>
-              <el-table-column prop="strong_location" label="库位"/>
-              <el-table-column prop="number" label="数量"/>
-              <el-table-column prop="person" label="入库申请人"/>
-              <el-table-column prop="comment" label="备注"/>
-              <el-table-column
-                fixed="right"
-                label="操作"
-                width="120">
-                <template slot-scope="scope">
-                  <el-button
-                    @click.native.prevent="deleteRow(scope.$index, tableData)"
-                    type="danger"
-                    size="small">
-                    删除
-                  </el-button>
-                </template>
-              </el-table-column>
-          </el-table>
-          </div>
-            <!-- 设置layout，表示需要显示的内容，用逗号分隔，布局元素会依次显示
+      <div style="display:inline-block;margin-left: 280px;">
+        <el-input v-model="searchTableInfo" prefix-icon="el-icon-search" placeholder="请输入搜索内容"
+          style="width:240px;display:inline-block;margin-left: -130px;" />
+        <el-button type="primary" @click="dialogFormVisible = true"
+          style="margin-left:720px;display:inline-block">新增出库</el-button>
+        <el-table :data="tableData==null?tableData:tableData.slice((currpage - 1) * pagesize, currpage * pagesize)"
+          style="width: 1500px;display:inline-block;margin-left: -130px;" max-height="740">
+          <el-table-column prop="timestamp" label="日期" />
+          <el-table-column prop="item_id" label="物料编号" />
+          <el-table-column prop="item_name" label="物料名称" />
+          <el-table-column prop="specification" label="规格型号" />
+          <el-table-column prop="unit" label="计量单位" />
+          <el-table-column prop="strong_location" label="库位" />
+          <el-table-column prop="number" label="数量" />
+          <el-table-column prop="person" label="入库申请人" />
+          <el-table-column prop="comment" label="备注" />
+          <el-table-column fixed="right" label="操作" width="120">
+            <template slot-scope="scope">
+              <el-button @click.native.prevent="deleteRow(scope.$index, tableData)" type="danger" size="small">
+                删除
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+      <!-- 设置layout，表示需要显示的内容，用逗号分隔，布局元素会依次显示
                     prev表示上一页，pager表示页码列表，next为下一页，
                     size用于设置每页显示的页码数量,total表示总条目数，jumper表示跳页元素
                     page-sizes每页显示个数选择器的选项设置,page-size每页显示条目个数
                 -->
-            <el-pagination
-                style="text-align:center"
-                :page-sizes="[20,50,100]"
-                :page-size="pagesize"
-                :total="tableData==null?0:tableData.length"
-                center
-                background
-                layout="prev, pager, next, sizes, total, jumper"
-                @current-change="handleCurrentChange"
-                @size-change="handleSizeChange"/>
-        </div>
-        <el-dialog title="新增出库" :visible.sync="dialogFormVisible" :modal-append-to-body="false" @close="quxiao">
-          <el-form :model="form">
-            <el-form-item label="日期" :label-width="formLabelWidth">
-              <div class="block">
-                <el-date-picker
-                  v-model="value_time"
-                  type="date"
-                  value-format="timestamp"
-                  placeholder="选择日期">
-                </el-date-picker>
-              </div>
-            </el-form-item>
-            <el-form-item label="物料编号" :label-width="formLabelWidth">
-              <el-select filterable default-first-option placeholder="请选择" v-model="value1" value-key="ID" @change="chan">
-                <el-option
-                  v-for="item in ids"
-                  :key="item.ID"
-                  :label="item.name"
-                  :value="item">
-                </el-option>
-              </el-select>    
-            </el-form-item>
-            <el-form-item label="物料名称" :label-width="formLabelWidth">
-              <el-input v-model="form.name" autocomplete="off" :disabled="true"></el-input>
-            </el-form-item>
-            <el-form-item label="规格型号" :label-width="formLabelWidth">
-              <el-input v-model="form.specification" autocomplete="off" :disabled="true"></el-input>
-            </el-form-item>
-            <el-form-item label="计量单位" :label-width="formLabelWidth">
-              <el-input v-model="form.unit" autocomplete="off" :disabled="true"></el-input>
-            </el-form-item>
-            <el-form-item label="库位" :label-width="formLabelWidth">
-              <el-input v-model="form.strong_location" autocomplete="off" :disabled="true"></el-input>
-            </el-form-item>
-            <el-form-item label="申请人" :label-width="formLabelWidth">
-              <el-select filterable default-first-option placeholder="请选择" v-model="value2" value-key="ID">
-                <el-option
-                  v-for="item in persons"
-                  :key="item.ID"
-                  :label="item.name"
-                  :value="item">
-                </el-option>
-              </el-select>    
-            </el-form-item>
-            <el-form-item label="数量" :label-width="formLabelWidth">
-              <el-input v-model="form.number" autocomplete="off"></el-input>
-            </el-form-item>
-            <el-form-item label="备注" :label-width="formLabelWidth">
-              <el-input v-model="form.comment" autocomplete="off"></el-input>
-            </el-form-item>
-          </el-form>
-          <div slot="footer" class="dialog-footer">
-            <el-button @click="quxiao">取 消</el-button>
-            <el-button type="primary" @click="queren">确 定</el-button>
-          </div>
-        </el-dialog>
+      <el-pagination style="text-align:center" :page-sizes="[20,50,100]" :page-size="pagesize"
+        :total="tableData==null?0:tableData.length" center background layout="prev, pager, next, sizes, total, jumper"
+        @current-change="handleCurrentChange" @size-change="handleSizeChange" />
     </div>
-    
-  </template>
+    <el-dialog title="新增出库" :visible.sync="dialogFormVisible" :modal-append-to-body="false" @close="quxiao">
+      <el-form :model="form">
+        <el-form-item label="日期" :label-width="formLabelWidth">
+          <div class="block">
+            <el-date-picker v-model="value_time" type="date" value-format="timestamp" placeholder="选择日期">
+            </el-date-picker>
+          </div>
+        </el-form-item>
+        <el-form-item label="物料编号" :label-width="formLabelWidth">
+          <el-select filterable default-first-option placeholder="请选择" v-model="value1" value-key="ID" @change="chan">
+            <el-option v-for="item in ids" :key="item.ID" :label="item.name" :value="item">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="物料名称" :label-width="formLabelWidth">
+          <el-input v-model="form.name" autocomplete="off" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="规格型号" :label-width="formLabelWidth">
+          <el-input v-model="form.specification" autocomplete="off" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="计量单位" :label-width="formLabelWidth">
+          <el-input v-model="form.unit" autocomplete="off" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="库位" :label-width="formLabelWidth">
+          <el-input v-model="form.strong_location" autocomplete="off" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="申请人" :label-width="formLabelWidth">
+          <el-select filterable default-first-option placeholder="请选择" v-model="value2" value-key="ID">
+            <el-option v-for="item in persons" :key="item.ID" :label="item.name" :value="item">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="数量" :label-width="formLabelWidth">
+          <el-input v-model="form.number" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="备注" :label-width="formLabelWidth">
+          <el-input v-model="form.comment" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="quxiao">取 消</el-button>
+        <el-button type="primary" @click="queren">确 定</el-button>
+      </div>
+    </el-dialog>
+  </div>
+</template>
   
-  <script>
+<script>
     import headbar from "../../components/HeadBar.vue"
     import sidebar from "../../components/SideNavigationBar.vue"
 
@@ -183,7 +156,7 @@
         this.$axios({
           method: 'get',
           url:"/api/outbound/get",
-          headers: { 'Authorization': localStorage.getItem('auth') }
+          headers: { 'Authorization': 'Bearer '+localStorage.getItem('auth') }
 
         }).then(res =>{
           that.getSearchInfo = res.data.details
@@ -195,7 +168,7 @@
         this.$axios({
           method: 'get',
           url:"/api/config/get",
-          headers: { 'Authorization': localStorage.getItem('auth') }
+          headers: { 'Authorization': 'Bearer '+localStorage.getItem('auth') }
           }).then(res =>{
             this.ids=res.data.config.item_ids
             this.persons=res.data.config.inbound_persons
@@ -219,7 +192,7 @@
         this.$axios({
           url:'/api/outbound/create',
           method: 'post',
-          headers: { 'Authorization': localStorage.getItem('auth') },
+          headers: { 'Authorization': 'Bearer '+localStorage.getItem('auth') },
           data:{
             timestamp: this.value_time+'',
             item_id: this.value1.name,
@@ -273,7 +246,7 @@
         this.$axios({
           method: 'get',
           url:"/api/item/get",
-          headers: { 'Authorization': localStorage.getItem('auth') }
+          headers: { 'Authorization': 'Bearer '+localStorage.getItem('auth') }
         }).then(res =>{
           for (let index = 0; index < res.data.items.length; index++) {
             if(res.data.items[index].item_id == that.value1.name){
@@ -298,7 +271,7 @@
           this.$axios({
           method: 'delete',
           url:"/api/outbound/delete",
-          headers: { 'Authorization': localStorage.getItem('auth')},
+          headers: { 'Authorization': 'Bearer '+localStorage.getItem('auth')},
           params:{id:index1}}).then(() =>{
             rows.splice(index, 1);
             this.$message({

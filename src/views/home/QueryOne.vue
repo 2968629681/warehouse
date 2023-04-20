@@ -1,99 +1,82 @@
 <template>
+  <div>
+    <headbar></headbar>
+    <sidebar style="position:absolute"></sidebar>
     <div>
-        <headbar></headbar>
-        <sidebar style="position:absolute"></sidebar>
-        <div>
-            <div>
-                <el-input v-model="searchTableInfo" prefix-icon="el-icon-search" placeholder="请输入搜索内容"
-                        style="width:240px;display:inline-block;margin-left: 700px;"/>
-            </div>
-            <div>
-                <el-descriptions style="display:inline-block;margin-left: 550px;" border :column="4">
-                    <el-descriptions-item>
-                        <template slot="label">
-                            期初库存
-                        </template>
-                        {{all_number}}
-                    </el-descriptions-item>
-                    <el-descriptions-item>
-                        <template slot="label">
-                            入库数量
-                        </template>
-                        {{all_in}}
-                    </el-descriptions-item>
-                    <el-descriptions-item>
-                        <template slot="label">
-                            出库数量
-                        </template>
-                        {{all_out}}
-                    </el-descriptions-item>
-                    <el-descriptions-item>
-                        <template slot="label">
-                            结存数量
-                        </template>
-                        {{all}}
-                    </el-descriptions-item>
-                </el-descriptions>
-            </div>
-            <!-- 表格数据及操作 -->
-            <div style="display:inline-block;width: 1650px">
-                <div style="display:inline-block;width: 700px;margin-left: 140px;">
-                    <div style="margin-left: 40px;display:inline-block;">入库明细 Inbound</div>
-                    <el-table
-                        :data="tableData==null?tableData:tableData.slice((currpage - 1) * pagesize, currpage * pagesize)"
-                        style="width: 800px;display:inline-block;"
-                        max-height="660">
-                        <el-table-column prop="timestamp" label="日期"/>
-                        <el-table-column prop="item_id" label="物料编号"/>
-                        <el-table-column prop="item_name" label="物料名称"/>
-                        <el-table-column prop="number" label="入库数量"/>
-                    </el-table>
-                    <el-pagination
-                    :page-sizes="[20,50,100]"
-                    :page-size="pagesize"
-                    :total="tableData==null?0:tableData.length"
-                    center
-                    background
-                    layout="prev, pager, next, sizes, total, jumper"
-                    @current-change="handleCurrentChange"
-                    @size-change="handleSizeChange"/>
-                </div>
-                <div style="display:inline-block;width: 700px;margin-left: 100px;vertical-align: top;">
-                        <div style="margin-left: 40px;display:inline-block;">出库明细 Outbound</div>
-                        <el-table
-                            :data="tableData1==null?tableData1:tableData1.slice((currpage - 1) * pagesize, currpage * pagesize)"
-                            style="width: 800px;display:inline-block;"
-                            max-height="660">
-                            <el-table-column prop="timestamp" label="日期"/>
-                            <el-table-column prop="item_id" label="物料编号"/>
-                            <el-table-column prop="item_name" label="物料名称"/>
-                            <el-table-column prop="number" label="出库数量"/>
-                        </el-table>
-                        <el-pagination
-                        :page-sizes="[20,50,100]"
-                        :page-size="pagesize1"
-                        :total="tableData1==null?0:tableData1.length"
-                        center
-                        background
-                        layout="prev, pager, next, sizes, total, jumper"
-                        @current-change="handleCurrentChange1"
-                        @size-change="handleSizeChange1"/>
-                    </div>
-            </div>
-            
-            
-            <!-- 设置layout，表示需要显示的内容，用逗号分隔，布局元素会依次显示
+      <div>
+        <el-input v-model="searchTableInfo" prefix-icon="el-icon-search" placeholder="请输入搜索内容"
+          style="width:240px;display:inline-block;margin-left: 700px;" />
+      </div>
+      <div>
+        <el-descriptions style="display:inline-block;margin-left: 550px;" border :column="4">
+          <el-descriptions-item>
+            <template slot="label">
+              期初库存
+            </template>
+            {{all_number}}
+          </el-descriptions-item>
+          <el-descriptions-item>
+            <template slot="label">
+              入库数量
+            </template>
+            {{all_in}}
+          </el-descriptions-item>
+          <el-descriptions-item>
+            <template slot="label">
+              出库数量
+            </template>
+            {{all_out}}
+          </el-descriptions-item>
+          <el-descriptions-item>
+            <template slot="label">
+              结存数量
+            </template>
+            {{all}}
+          </el-descriptions-item>
+        </el-descriptions>
+      </div>
+      <!-- 表格数据及操作 -->
+      <div style="display:inline-block;width: 1650px">
+        <div style="display:inline-block;width: 700px;margin-left: 140px;">
+          <div style="margin-left: 40px;display:inline-block;">入库明细 Inbound</div>
+          <el-table :data="tableData==null?tableData:tableData.slice((currpage - 1) * pagesize, currpage * pagesize)"
+            style="width: 800px;display:inline-block;" max-height="660">
+            <el-table-column prop="timestamp" label="日期" />
+            <el-table-column prop="item_id" label="物料编号" />
+            <el-table-column prop="item_name" label="物料名称" />
+            <el-table-column prop="number" label="入库数量" />
+          </el-table>
+          <el-pagination :page-sizes="[20,50,100]" :page-size="pagesize" :total="tableData==null?0:tableData.length"
+            center background layout="prev, pager, next, sizes, total, jumper" @current-change="handleCurrentChange"
+            @size-change="handleSizeChange" />
+        </div>
+        <div style="display:inline-block;width: 700px;margin-left: 100px;vertical-align: top;">
+          <div style="margin-left: 40px;display:inline-block;">出库明细 Outbound</div>
+          <el-table :data="tableData1==null?tableData1:tableData1.slice((currpage - 1) * pagesize, currpage * pagesize)"
+            style="width: 800px;display:inline-block;" max-height="660">
+            <el-table-column prop="timestamp" label="日期" />
+            <el-table-column prop="item_id" label="物料编号" />
+            <el-table-column prop="item_name" label="物料名称" />
+            <el-table-column prop="number" label="出库数量" />
+          </el-table>
+          <el-pagination :page-sizes="[20,50,100]" :page-size="pagesize1" :total="tableData1==null?0:tableData1.length"
+            center background layout="prev, pager, next, sizes, total, jumper" @current-change="handleCurrentChange1"
+            @size-change="handleSizeChange1" />
+        </div>
+      </div>
+
+
+      <!-- 设置layout，表示需要显示的内容，用逗号分隔，布局元素会依次显示
                     prev表示上一页，pager表示页码列表，next为下一页，
                     size用于设置每页显示的页码数量,total表示总条目数，jumper表示跳页元素
                     page-sizes每页显示个数选择器的选项设置,page-size每页显示条目个数
                 -->
-            
-        </div>
+
     </div>
-    
-  </template>
+  </div>
+</template>
   
-  <script>
+<script>
     import headbar from "../../components/HeadBar.vue"
     import sidebar from "../../components/SideNavigationBar.vue"
 
@@ -238,7 +221,7 @@
         this.$axios({
           method: 'get',
           url:"/api/inbound/get",
-          headers: { 'Authorization': localStorage.getItem('auth') }
+          headers: { 'Authorization': 'Bearer '+localStorage.getItem('auth') }
 
         }).then(res =>{
           this.wu_name=[]; //this.wu_name重置 消去之前值的影响
@@ -258,7 +241,7 @@
         this.$axios({
           method: 'get',
           url:"/api/outbound/get",
-          headers: { 'Authorization': localStorage.getItem('auth') }
+          headers: { 'Authorization': 'Bearer '+localStorage.getItem('auth') }
 
         }).then(res =>{
           that.getSearchInfo1 = res.data.details
@@ -277,7 +260,7 @@
         this.$axios({
           method: 'get',
           url:"/api/item/get",
-          headers: { 'Authorization': localStorage.getItem('auth') }
+          headers: { 'Authorization': 'Bearer '+localStorage.getItem('auth') }
 
         }).then(res =>{
           this.wu=res.data.items

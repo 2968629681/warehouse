@@ -5,6 +5,9 @@
             :default-active="$route.path"
             class="el-menu-vertical-demo"
             router>
+            <!--<el-menu-item v-for="item in lists" :key="item" :index="item.path">
+                <span slot="title">{{item.title}}</span>
+            </el-menu-item>-->
             <el-menu-item index="/home">
                 <span slot="title">首页菜单</span>
             </el-menu-item>
@@ -23,7 +26,16 @@
             <el-menu-item index="/homepage/time">
                 <span slot="title">时间查询</span>
             </el-menu-item>
-            <el-menu-item v-if="user == 'true'"  index="/homepage/sys">
+            <el-menu-item  index="/homepage/user">
+                <span slot="title">用户管理</span>
+            </el-menu-item>
+            <el-menu-item  index="/homepage/role">
+                <span slot="title">角色管理</span>
+            </el-menu-item>
+            <el-menu-item  index="/homepage/dept">
+                <span slot="title">用户组管理</span>
+            </el-menu-item>
+            <el-menu-item  index="/homepage/sys">
                 <span slot="title">系统设置</span>
             </el-menu-item>
             </el-menu>
@@ -32,14 +44,21 @@
 </template>
 
 <script>
+
   export default {
     data(){
     return{
-      user:''
+      user:'',
+      lists:[]
     }
   },
   created(){
-    this.user = localStorage.user
+    this.user = localStorage.user;
+            this.$axios.get(
+                "/api/menurole",{
+                headers: { 'Authorization': 'Bearer ' + localStorage.getItem('auth') }
+            }
+            ).then(res => this.lists=res.data.data[0].children);
   },
     methods: {
     }

@@ -132,7 +132,7 @@ export default{
     },
     methods: {
       info() { // 获取信息
-        if( !localStorage.getItem('user')){
+        if( !this.$store.state.user){
           this.notifyId = this.$notify({
             message: "权限不足,无法进入",
             duration: 2000
@@ -145,12 +145,12 @@ export default{
         this.$axios({
           method: 'get',
           url:"/api/config/get",
-          headers: { 'Authorization': localStorage.getItem('auth') }
+          headers: { 'Authorization': 'Bearer ' +localStorage.getItem('auth') }
           }).then(res =>{
-            that.getSearchInfo = res.data.config.inbound_persons
-            that.getSearchInfo1 = res.data.config.outbound_persons
-            that.getSearchInfo2 = res.data.config.units
-            that.getSearchInfo3 = res.data.config.strong_locations
+            that.getSearchInfo = res.data.data.inbound_persons
+            that.getSearchInfo1 = res.data.data.outbound_persons
+            that.getSearchInfo2 = res.data.data.units
+            that.getSearchInfo3 = res.data.data.strong_locations
           }).catch(() =>{
         })
       },
@@ -165,10 +165,10 @@ export default{
             this.$axios({
               method: 'post',
               url:"/api/config/add",
-              headers: { 'Authorization': localStorage.getItem('auth') },
+              headers: { 'Authorization': 'Bearer ' +localStorage.getItem('auth') },
               params:{ inbound_persons:that.form.name}
             }).then((res) =>{
-              this.getSearchInfo=res.data.config.inbound_persons
+              this.getSearchInfo=res.data.data.inbound_persons
               that.$message({
                 type: 'success',
                 message: '新增成功!'
@@ -183,10 +183,10 @@ export default{
             this.$axios({
               method: 'post',
               url:"/api/config/add",
-              headers: { 'Authorization': localStorage.getItem('auth') },
+              headers: { 'Authorization': 'Bearer ' +localStorage.getItem('auth') },
               params:{ outbound_persons:that.form.name }
             }).then((res) =>{
-              this.getSearchInfo1=res.data.config.outbound_persons
+              this.getSearchInfo1=res.data.data.outbound_persons
               that.$message({
                 type: 'success',
                 message: '新增成功!'
@@ -202,10 +202,10 @@ export default{
             this.$axios({
               method: 'post',
               url:"/api/config/add",
-              headers: { 'Authorization': localStorage.getItem('auth') },
+              headers: { 'Authorization': 'Bearer ' +localStorage.getItem('auth') },
               params:{ units:that.form.name }
             }).then((res) =>{
-              this.getSearchInfo2=res.data.config.units
+              this.getSearchInfo2=res.data.data.units
               that.$message({
                 type: 'success',
                 message: '新增成功!'
@@ -221,10 +221,10 @@ export default{
             this.$axios({
               method: 'post',
               url:"/api/config/add",
-              headers: { 'Authorization': localStorage.getItem('auth') },
-              params:{ strong_locations:that.form.name }
+              headers: { 'Authorization': 'Bearer ' +localStorage.getItem('auth') },
+              params:{ storage_location:that.form.name }
              }).then((res) =>{
-              this.getSearchInfo3=res.data.config.strong_locations
+              this.getSearchInfo3=res.data.data.strong_locations
                 that.$message({
                   type: 'success',
                   message: '新增成功!'
@@ -249,7 +249,7 @@ export default{
             this.$axios({
               method: 'post',
               url:"/api/config/delete",
-              headers: { 'Authorization': localStorage.getItem('auth') },
+              headers: { 'Authorization': 'Bearer ' +localStorage.getItem('auth') },
               params:{ inbound_persons:rows[index1].name }
             }).then(() =>{
               rows.splice(index1, 1)
@@ -267,7 +267,7 @@ export default{
             this.$axios({
               method: 'post',
               url:"/api/config/delete",
-              headers: { 'Authorization': localStorage.getItem('auth') },
+              headers: { 'Authorization': 'Bearer ' +localStorage.getItem('auth') },
               params:{ outbound_persons:rows[index1].name }
             }).then(() =>{
               rows.splice(index1, 1)
@@ -286,7 +286,7 @@ export default{
             this.$axios({
               method: 'post',
               url:"/api/config/delete",
-              headers: { 'Authorization': localStorage.getItem('auth') },
+              headers: { 'Authorization': 'Bearer ' +localStorage.getItem('auth') },
               params:{ units:rows[index1].name }
             }).then(() =>{
               rows.splice(index1, 1)
@@ -305,7 +305,7 @@ export default{
             this.$axios({
               method: 'post',
               url:"/api/config/delete",
-              headers: { 'Authorization': localStorage.getItem('auth') },
+              headers: { 'Authorization': 'Bearer ' +localStorage.getItem('auth') },
               params:{ strong_locations:rows[index1].name }
              }).then(() =>{
                 rows.splice(index1, 1);

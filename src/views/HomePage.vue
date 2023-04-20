@@ -98,7 +98,7 @@ export default {
 }
 .tiao{
   margin: 20px;
-  width: 470px;
-  height: 130px;
+  width: 320px;
+  height: 105px;
 }
 </style>

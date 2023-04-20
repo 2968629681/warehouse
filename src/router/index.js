@@ -43,6 +43,18 @@ const routes = [
           component: () => { return import("../views/home/QueryTime.vue") },
       },
       {
+          path: "role",
+          component: () => { return import("../views/home/RoleSettings.vue") },
+      },
+      {
+          path: "user",
+          component: () => { return import("../views/home/UserSettings.vue") },
+      },
+      {
+          path: "dept",
+          component: () => { return import("../views/home/DeptSettings.vue") },
+      },
+      {
           path: "sys",
           component: () => { return import("../views/home/SystemSettings.vue") },
       }]

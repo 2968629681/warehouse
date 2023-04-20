@@ -1,109 +1,86 @@
 <template>
+  <div>
+    <headbar></headbar>
+    <sidebar style="position:absolute"></sidebar>
     <div>
-        <headbar></headbar>
-        <sidebar style="position:absolute"></sidebar>
+      <div>
         <div>
-            <div>
-                <div>
-                    <el-date-picker
-                    v-model="value1"
-                    type="daterange"
-                    range-separator="至"
-                    start-placeholder="开始日期"
-                    end-placeholder="结束日期"
-                    value-format="timestamp"
-                    style="margin-left: 600px;">
-                    </el-date-picker>
-                    <el-button type="primary" @click="sear">点击查询</el-button>
-                </div>
-            </div>
-            <div>
-                <el-descriptions style="display:inline-block;margin-left: 600px" border :column="4">
-                    <el-descriptions-item>
-                      <template slot="label">
-                            入库次数
-                        </template>
-                        {{all_in}}
-                    </el-descriptions-item>
-                    <el-descriptions-item>
-                        <template slot="label">
-                            总入库数量
-                        </template>
-                        {{all_innumber}}
-                    </el-descriptions-item>
-                    <el-descriptions-item>
-                        <template slot="label">
-                            出库次数
-                        </template>
-                        {{all_out}}
-                    </el-descriptions-item>
-                    <el-descriptions-item>
-                        <template slot="label">
-                            总出库数量
-                        </template>
-                        {{all_outnumber}}
-                    </el-descriptions-item>
-                </el-descriptions>
-            </div>
-            <!-- 表格数据及操作 -->
-            <div style="display:inline-block;width: 1650px">
-                <div style="display:inline-block;width: 700px;margin-left: 140px;">
-                    <div style="margin-left: 40px;display:inline-block;">入库明细 Inbound</div>
-                    <el-table
-                        :data="tableData==null?tableData:tableData.slice((currpage - 1) * pagesize, currpage * pagesize)"
-                        style="width: 800px;display:inline-block;"
-                        max-height="660">
-                        <el-table-column prop="timestamp" label="日期"/>
-                        <el-table-column prop="item_id" label="物料编号"/>
-                        <el-table-column prop="item_name" label="物料名称"/>
-                        <el-table-column prop="number" label="数量"/>
-                    </el-table>
-                    <el-pagination
-                    :page-sizes="[20,50,100]"
-                    :page-size="pagesize"
-                    :total="tableData==null?0:tableData.length"
-                    center
-                    background
-                    layout="prev, pager, next, sizes, total, jumper"
-                    @current-change="handleCurrentChange"
-                    @size-change="handleSizeChange"/>
-                </div>
-                <div style="display:inline-block;width: 700px;margin-left: 50px;vertical-align: top">
-                        <div style="margin-left: 40px;display:inline-block;">出库明细 Outbound</div>
-                        <el-table
-                            :data="tableData1==null?tableData1:tableData1.slice((currpage - 1) * pagesize, currpage * pagesize)"
-                            style="width:800px;display:inline-block;"
-                            max-height="660">
-                            <el-table-column prop="timestamp" label="日期"/>
-                            <el-table-column prop="item_id" label="物料编号"/>
-                            <el-table-column prop="item_name" label="物料名称"/>
-                            <el-table-column prop="number" label="数量"/>
-                        </el-table>
-                        <el-pagination
-                        :page-sizes="[20,50,100]"
-                        :page-size="pagesize1"
-                        :total="tableData1==null?0:tableData1.length"
-                        center
-                        background
-                        layout="prev, pager, next, sizes, total, jumper"
-                        @current-change="handleCurrentChange1"
-                        @size-change="handleSizeChange1"/>
-                </div>
-            </div>
-            
-            
-            <!-- 设置layout，表示需要显示的内容，用逗号分隔，布局元素会依次显示
+          <el-date-picker v-model="value1" type="daterange" range-separator="至" start-placeholder="开始日期"
+            end-placeholder="结束日期" value-format="timestamp" style="margin-left: 600px;">
+          </el-date-picker>
+          <el-button type="primary" @click="sear">点击查询</el-button>
+        </div>
+      </div>
+      <div>
+        <el-descriptions style="display:inline-block;margin-left: 600px" border :column="4">
+          <el-descriptions-item>
+            <template slot="label">
+              入库次数
+            </template>
+            {{all_in}}
+          </el-descriptions-item>
+          <el-descriptions-item>
+            <template slot="label">
+              总入库数量
+            </template>
+            {{all_innumber}}
+          </el-descriptions-item>
+          <el-descriptions-item>
+            <template slot="label">
+              出库次数
+            </template>
+            {{all_out}}
+          </el-descriptions-item>
+          <el-descriptions-item>
+            <template slot="label">
+              总出库数量
+            </template>
+            {{all_outnumber}}
+          </el-descriptions-item>
+        </el-descriptions>
+      </div>
+      <!-- 表格数据及操作 -->
+      <div style="display:inline-block;width: 1650px">
+        <div style="display:inline-block;width: 700px;margin-left: 140px;">
+          <div style="margin-left: 40px;display:inline-block;">入库明细 Inbound</div>
+          <el-table :data="tableData==null?tableData:tableData.slice((currpage - 1) * pagesize, currpage * pagesize)"
+            style="width: 800px;display:inline-block;" max-height="660">
+            <el-table-column prop="timestamp" label="日期" />
+            <el-table-column prop="item_id" label="物料编号" />
+            <el-table-column prop="item_name" label="物料名称" />
+            <el-table-column prop="number" label="数量" />
+          </el-table>
+          <el-pagination :page-sizes="[20,50,100]" :page-size="pagesize" :total="tableData==null?0:tableData.length"
+            center background layout="prev, pager, next, sizes, total, jumper" @current-change="handleCurrentChange"
+            @size-change="handleSizeChange" />
+        </div>
+        <div style="display:inline-block;width: 700px;margin-left: 50px;vertical-align: top">
+          <div style="margin-left: 40px;display:inline-block;">出库明细 Outbound</div>
+          <el-table :data="tableData1==null?tableData1:tableData1.slice((currpage - 1) * pagesize, currpage * pagesize)"
+            style="width:800px;display:inline-block;" max-height="660">
+            <el-table-column prop="timestamp" label="日期" />
+            <el-table-column prop="item_id" label="物料编号" />
+            <el-table-column prop="item_name" label="物料名称" />
+            <el-table-column prop="number" label="数量" />
+          </el-table>
+          <el-pagination :page-sizes="[20,50,100]" :page-size="pagesize1" :total="tableData1==null?0:tableData1.length"
+            center background layout="prev, pager, next, sizes, total, jumper" @current-change="handleCurrentChange1"
+            @size-change="handleSizeChange1" />
+        </div>
+      </div>
+
+
+      <!-- 设置layout，表示需要显示的内容，用逗号分隔，布局元素会依次显示
                     prev表示上一页，pager表示页码列表，next为下一页，
                     size用于设置每页显示的页码数量,total表示总条目数，jumper表示跳页元素
                     page-sizes每页显示个数选择器的选项设置,page-size每页显示条目个数
                 -->
-            
-        </div>
+
     </div>
-    
-  </template>
+  </div>
+</template>
   
-  <script>
+<script>
     import headbar from "../../components/HeadBar.vue"
     import sidebar from "../../components/SideNavigationBar.vue"
 
@@ -199,7 +176,7 @@
         this.$axios({
           method: 'get',
           url:"/api/inbound/get",
-          headers: { 'Authorization': localStorage.getItem('auth') }
+          headers: { 'Authorization': 'Bearer '+localStorage.getItem('auth') }
 
         }).then(res =>{
           that.getSearchInfo = res.data.details
@@ -218,7 +195,7 @@
         this.$axios({
           method: 'get',
           url:"/api/outbound/get",
-          headers: { 'Authorization': localStorage.getItem('auth') }
+          headers: { 'Authorization': 'Bearer '+localStorage.getItem('auth') }
 
           }).then(res =>{
             that.getSearchInfo1 = res.data.details
@@ -243,7 +220,7 @@
         this.$axios({
           method: 'post',
           url:"/api/query_by_timestamp",
-          headers: { 'Authorization': localStorage.getItem('auth') },
+          headers: { 'Authorization': 'Bearer '+localStorage.getItem('auth') },
           params:{
             start:st,
             end:ed
