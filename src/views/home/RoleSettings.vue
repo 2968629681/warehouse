@@ -3,9 +3,38 @@
         <headbar></headbar>
         <sidebar style="position:absolute"></sidebar>
         <main>
-
-            <button @click="addRole()">添加</button>
-            <table border="1" cellspacing="0" style="border-color:#ededed;" v-if="roles">
+            <el-button @click="dialogFormVisible = true" type="primary">添加新角色</el-button>
+        <el-table :data="roles"
+            style="width: 100%;display:inline-block;" max-height="740">
+            <el-table-column prop="roleId" label="角色编号" width="150"/>
+            <el-table-column prop="roleName" label="角色名称" width="150"/>
+            <el-table-column prop="roleKey" label="权限字符" width="150"/>
+            <el-table-column prop="roleSort" label="显示顺序" width="150"/>        
+            <el-table-column label="是否启用" width="150">
+                <template slot-scope="scope">
+                    <el-switch
+                        v-model="scope.row.status"
+                        active-color="#02538C"
+                        inactive-color="#B9B9B9"
+                        disabled/>
+                </template>
+            </el-table-column>
+            <el-table-column prop="createdAt" label="创建时间" width="200" />
+            <el-table-column fixed="right" label="操作">
+            <template slot-scope="scope">
+                <el-button @click.native.prevent="editRole(scope.$index, roles)" size="mini">
+                编辑
+                </el-button>
+                <el-button size="mini" @click="limits(scope.$index, roles)" type="primary">
+                控制权限
+                </el-button>
+                <el-button type="danger" size="mini" @click="delRole(scope.$index, roles)">
+                删除
+                </el-button>
+            </template>
+            </el-table-column>
+        </el-table>
+            <!-- <table border="1" cellspacing="0" style="border-color:#ededed;" v-if="roles">
                 <tr>
                     <th>角色编号</th>
                     <th>角色名称</th>
@@ -35,11 +64,56 @@
                     <td>{{ formatDate(role.createdAt) }}</td>
                     <td><button @click="editName(index)">修改</button>
                         <button @click="delRole(index)">删除角色</button>
-                        <!--<button @click="editPermission(index)">修改权限</button>-->
-                    </td>
+                        <button @click="editPermission(index)">修改权限</button>-->
+                    <!-- </td>
                 </tr>
-            </table>
+            </table> -->
         </main>
+        <el-dialog title="编辑角色" :visible.sync="dialogFormVisible1" :modal-append-to-body="false">
+        <el-form :model="form">
+            <el-form-item label="角色名称" :label-width="formLabelWidth">
+            <el-input v-model="form.roleName" autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="权限字符" :label-width="formLabelWidth">
+            <el-input v-model="form.roleKey" autocomplete="off"></el-input>
+            </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+            <el-button @click="dialogFormVisible = false">取 消</el-button>
+            <el-button type="primary" @click="queren">确 定</el-button>
+        </div>
+        </el-dialog>
+
+        <el-dialog title="添加新角色" :visible.sync="dialogFormVisible" :modal-append-to-body="false">
+        <el-form :model="form1">
+            <el-form-item label="角色名称" :label-width="formLabelWidth">
+            <el-input v-model="form1.roleName" autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="权限字符" :label-width="formLabelWidth">
+            <el-input v-model="form1.roleKey" autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="是否启用" :label-width="formLabelWidth">
+                <el-radio v-model="form1.radio" label="1">禁用</el-radio>
+                <el-radio v-model="form1.radio" label="2">启用</el-radio>
+            </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+            <el-button @click="dialogFormVisible = false">取 消</el-button>
+            <el-button type="primary" @click="queren1">确 定</el-button>
+        </div>
+        </el-dialog>
+
+        <el-dialog title="修改权限" :visible.sync="dialogFormVisible2" :modal-append-to-body="false">
+            <el-tree ref="tree" :props="props" node-key="menuId" :data="menu" :default-checked-keys="roles.menuIds" show-checkbox @check-change="editPermission">
+            </el-tree>
+            <span>数据范围:</span>
+            <select @change="changecope(index, $event.srcElement.selectedIndex)">
+                <option v-for="a in datascope" :key="a" :label="a">{{ a }}</option>
+            </select>
+        <div slot="footer" class="dialog-footer">
+            <el-button type="primary" @click="dialogFormVisible2 = false">确 定</el-button>
+        </div>
+        </el-dialog>
     </div>
 </template>
 
@@ -55,17 +129,74 @@ export default {
     },
     data() {
         return {
+            dialogFormVisible: false,
+            dialogFormVisible1: false,
+            dialogFormVisible2: false,
+            formLabelWidth:'120px',
             roles: [],
             menu: [],
+            form:{},
+            form1:{},
             props: { label: "title" },
             value: false,
-            datascope: ["全部", " 本部门", " 本部门及以下", " 仅本人"]
+            datascope: ["全部", " 本部门", " 本部门及以下", " 仅本人"],
+            index:'',
+            index1:'',
         }
     },
     created() {
         this.info();
     },
     methods: {
+        limits(index,roles){
+            this.dialogFormVisible2 = true
+            console.log(index,roles);
+            this.index1=index
+        },
+        queren1(){
+            console.log(this.form1);
+            this.form1.status = this.form1.radio.radio
+            this.form1.admin =this.$store.state.user
+            this.$axios.post('/api/role/create', this.form1, {
+                        headers: { 'Authorization': 'Bearer ' + localStorage.getItem('auth') }
+                    }).then(res=>{
+                        console.log(res);
+                        this.info()
+                        this.form1={}
+                        this.dialogFormVisible=false
+                        Swal.fire(
+                        '新增成功',
+                        '',
+                        'success'
+                        )
+                    }).catch(err=>{
+                        console.log(err);
+                        Swal.fire(
+                        '新增失败',
+                        '',
+                        'warning'
+                        )
+                    })
+        },
+        queren(){
+            console.log(this.form);
+            this.$axios.put(
+                `/api/role/update/${this.index}`, this.form, {
+                headers: { 'Authorization': 'Bearer ' + localStorage.getItem('auth') }
+            }
+            ).then(res => {
+                console.log(res);
+                Swal.fire(res.data.msg, '', 'success')
+                this.dialogFormVisible=false
+                this.info()
+            }
+                );
+        },
+        editRole(index,roles) {
+            console.log(index,roles);
+            this.index=roles[index].roleId
+            this.dialogFormVisible1=true
+        },
         updateStatus(role, value) {
             if (value) {
                 role.status = "2";
@@ -74,7 +205,7 @@ export default {
             }
             const json = role;
             this.$axios.put(
-                "/api/role/update/3", json, {
+                "/api/role/update/", json, {
                 headers: { 'Authorization': 'Bearer ' + localStorage.getItem('auth') }
             }
             ).then(res => Swal.fire(res.data.msg, '', 'success'));
@@ -103,9 +234,16 @@ export default {
                 url: "/api/role/get",
                 headers: { 'Authorization': 'Bearer ' + localStorage.getItem('auth') }
             }).then(res => {
-
                 this.roles = res.data.data.list;
-                console.log(res);
+                for (var i = 0; i < this.roles.length; i++) {
+                    this.roles[i].createdAt=this.formatDate(this.roles[i].createdAt)
+                    if(this.roles[i].status == 2){
+                        this.roles[i].status = true
+                    }else{
+                        this.roles[i].status = false
+                    }
+                }
+                console.log(res)
             }).catch(() => {
             })
         },
@@ -126,7 +264,8 @@ export default {
         padZero(num) {
             return num.toString().padStart(2, '0');
         },
-        delRole(index) {
+        delRole(index,role) {
+            var roles = [role[index].roleId]
             Swal.fire({
                 title: '是否确定删除该角色?',
                 text: "",
@@ -140,7 +279,7 @@ export default {
                 if (result.isConfirmed) {
                     this.$axios.delete(
                         "/api/role/delete",
-                        { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('auth') }, data: { ids: [this.roles[index].roleId] } }
+                        { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('auth') }, data: { ids: roles } }
 
                     ).then(res => {
                         console.log(res);
@@ -155,84 +294,39 @@ export default {
                 }
             });
         },
-        addRole(index) {
-
-            Swal.fire({
-                title: '输入信息',
-                html:
-                    '角色名称<input id="rolename" class="swal2-input"><br>' +
-                    '权限字符<input id="rolekey" class="swal2-input"><br>' +
-                    '<br>' +
-                    '<label for="isEnable">启用</label>' +
-                    '<input type="radio" id="swal-radio1" name="radio" default>' +
-                    '<label for="isEnable">停用</label>' +
-                    '<input type="radio" id="swal-radio2" name="radio">',
-                focusConfirm: false,
-                preConfirm: () => {
-                    const json = {
-                        "admin": this.$store.state.user,
-                        "roleName": document.querySelector('#rolename').value,
-                        "roleKey": document.querySelector('#rolekey').value,
-                        "status": document.getElementById('swal-radio1').checked ? '2' : '1',
-                    }
-                    this.$axios.post('/api/role/create', json, {
-                        headers: { 'Authorization': 'Bearer ' + localStorage.getItem('auth') }
-                    }
-                    )
-                }
-            }).then((result) => {
-                if (result.value) {
-                    console.log(result.value)
-                }
-            }); console.log(index);
+        editPermission() {
+            console.log(this.index1)
+            let json=this.roles[this.index1];
+            json.roleId=this.roles[this.index1].roleId,
+            json.menuIds=this.$refs.tree.getCheckedKeys()
+            if (json.status) {
+                json.status='2'
+            }else{
+                json.status='1'
+            }
+            console.log(json,123)
+            this.$axios.put(`/api/role/update/${json.roleId}`,json, {
+                headers: { 'Authorization': 'Bearer ' + localStorage.getItem('auth') }
+            }).then(res=>{
+                console.log(res);
+            }).catch(err=>{
+                console.log(err);
+            })
         },
-        editName(index) {
-            Swal.fire({
-                title: '请输入角色名称',
-                input: 'text',
-                inputAttributes: {
-                    autocapitalize: 'off'
-                },
-                showCancelButton: true,
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
-                showLoaderOnConfirm: true,
-                preConfirm: (name) => {
-                    this.roles[index].roleName = name;
-                    const json = this.roles[index];
-                    this.$axios.put(
-                        "/api/role/update/2", json, {
-                        headers: { 'Authorization': 'Bearer ' + localStorage.getItem('auth') }
-                    }
-                    ).then(res => Swal.fire(res.data.msg, '', 'success'));
-                },
-                allowOutsideClick: () => !Swal.isLoading()
-            })//.then((result) => {
-            //if (result.isConfirmed) {
-            //Swal.fire({
-            //title: `${result.msg}`,
-            //})
-            // }
-            //})
-        },
-        editPermission(index,role) {
-console.log(role);
-            let json=this.roles[index];
-            json.roleId=this.roles[index].roleId,
-            json.menuIds=this.$refs.tree[index].getCheckedKeys() 
-            this.$axios.put('/api/role/update/'+this.roles[index].roleId,json, {
-                       headers: { 'Authorization': 'Bearer ' + localStorage.getItem('auth') }
-                    })
-        },
-        changecope(index, tab) {
-            const rule=['','3','4','5']
+        changecope(index,tab) {
+            const rule=['1','3','4','5']
             const json={
                 "dataScope":rule[tab],
-                "roleId":this.roles[index].roleId 
+                "roleId":this.roles[this.index1].roleId
             }
+            console.log(tab,json);
             this.$axios.put('/api/roledatascope',json, {
-                       headers: { 'Authorization': 'Bearer ' + localStorage.getItem('auth') }
-                    })
+                headers: { 'Authorization': 'Bearer ' + localStorage.getItem('auth') }
+            }).then(res=>{
+                console.log(res);
+            }).catch(err=>{
+                console.log(err);
+            })
         }
     },
 }
@@ -253,7 +347,7 @@ ul li {
     border-bottom: 1px solid #ccc;
 }
 
-button {
+/* button {
     margin: 0 .4rem;
     box-shadow: inset 0px 1px 0px 0px #ffffff;
     background: linear-gradient(to bottom, #ededed 5%, #dfdfdf 100%);
@@ -278,7 +372,7 @@ button:hover {
 button:active {
     position: relative;
     top: 1px;
-}
+} */
 
 td {
     padding: 9px;

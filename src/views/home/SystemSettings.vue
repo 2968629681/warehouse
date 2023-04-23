@@ -147,10 +147,11 @@ export default{
           url:"/api/config/get",
           headers: { 'Authorization': 'Bearer ' +localStorage.getItem('auth') }
           }).then(res =>{
-            that.getSearchInfo = res.data.data.inbound_persons
-            that.getSearchInfo1 = res.data.data.outbound_persons
-            that.getSearchInfo2 = res.data.data.units
-            that.getSearchInfo3 = res.data.data.strong_locations
+            console.log(res)
+            that.getSearchInfo = res.data.config.inbound_persons
+            that.getSearchInfo1 = res.data.config.outbound_persons
+            that.getSearchInfo2 = res.data.config.units
+            that.getSearchInfo3 = res.data.config.strong_locations
           }).catch(() =>{
         })
       },
@@ -168,7 +169,7 @@ export default{
               headers: { 'Authorization': 'Bearer ' +localStorage.getItem('auth') },
               params:{ inbound_persons:that.form.name}
             }).then((res) =>{
-              this.getSearchInfo=res.data.data.inbound_persons
+              this.getSearchInfo=res.data.config.inbound_persons
               that.$message({
                 type: 'success',
                 message: '新增成功!'
@@ -186,7 +187,7 @@ export default{
               headers: { 'Authorization': 'Bearer ' +localStorage.getItem('auth') },
               params:{ outbound_persons:that.form.name }
             }).then((res) =>{
-              this.getSearchInfo1=res.data.data.outbound_persons
+              this.getSearchInfo1=res.data.config.outbound_persons
               that.$message({
                 type: 'success',
                 message: '新增成功!'
@@ -205,7 +206,7 @@ export default{
               headers: { 'Authorization': 'Bearer ' +localStorage.getItem('auth') },
               params:{ units:that.form.name }
             }).then((res) =>{
-              this.getSearchInfo2=res.data.data.units
+              this.getSearchInfo2=res.data.config.units
               that.$message({
                 type: 'success',
                 message: '新增成功!'
@@ -224,7 +225,7 @@ export default{
               headers: { 'Authorization': 'Bearer ' +localStorage.getItem('auth') },
               params:{ storage_location:that.form.name }
              }).then((res) =>{
-              this.getSearchInfo3=res.data.data.strong_locations
+              this.getSearchInfo3=res.data.config.strong_locations
                 that.$message({
                   type: 'success',
                   message: '新增成功!'
@@ -247,7 +248,7 @@ export default{
         }).then(() => {
           if(this.index==0){
             this.$axios({
-              method: 'post',
+              method: 'delete',
               url:"/api/config/delete",
               headers: { 'Authorization': 'Bearer ' +localStorage.getItem('auth') },
               params:{ inbound_persons:rows[index1].name }
@@ -265,7 +266,7 @@ export default{
             });
           }else if(this.index ==1) {
             this.$axios({
-              method: 'post',
+              method: 'delete',
               url:"/api/config/delete",
               headers: { 'Authorization': 'Bearer ' +localStorage.getItem('auth') },
               params:{ outbound_persons:rows[index1].name }
@@ -284,7 +285,7 @@ export default{
           }
           else if(this.index ==2)  {
             this.$axios({
-              method: 'post',
+              method: 'delete',
               url:"/api/config/delete",
               headers: { 'Authorization': 'Bearer ' +localStorage.getItem('auth') },
               params:{ units:rows[index1].name }
@@ -303,7 +304,7 @@ export default{
           }
           else {
             this.$axios({
-              method: 'post',
+              method: 'delete',
               url:"/api/config/delete",
               headers: { 'Authorization': 'Bearer ' +localStorage.getItem('auth') },
               params:{ strong_locations:rows[index1].name }

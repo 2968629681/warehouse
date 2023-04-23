@@ -5,11 +5,6 @@
         <main>
             <el-button @click="dialogFormVisible = true" type="primary">添加新用户</el-button>
            <br> <span>用户组编号表:</span>
-            <div style="display:flex">
-                
-<el-tree :data="depts"  default-expand-all style="width:150px"></el-tree>
-<el-tree :data="depts"  default-expand-all :props="{ label: 'id' }" style="width:150px"></el-tree>
-</div>
     <el-table :data="users"
         style="width: 100%;display:inline-block;" max-height="740">
         <el-table-column prop="username" label="用户账号" width="150"/>
@@ -154,7 +149,7 @@ export default {
     methods: {
         queren(){
             console.log(this.value,this.radio,this.radio1,this.form);
-            this.form.userId = this.users.length + 2
+            // this.form.userId = this.users.length + 2
             this.form.status = this.radio
             this.form.deptId = parseInt(this.form.deptId)
             this.form.roleId = parseInt(this.radio1)
@@ -162,8 +157,8 @@ export default {
                 headers: { 'Authorization': 'Bearer ' + localStorage.getItem('auth') }
             }
             ).then(res=>{
-                console.log(res);
-                if(res.datas.code ==500){
+                console.log(res,456);
+                if(res.data.code ==500){
                     this.notifyId = this.$notify({
                     message: "新增失败，请全部输入后在提交",
                     duration: 2000
@@ -192,6 +187,16 @@ export default {
             this.form1.status = this.radio2
             this.form1.deptId = parseInt(this.form1.deptId)
             this.form1.roleId = parseInt(this.radio3)
+            this.$axios.put(
+                        "/api/sys-user/update", this.form1, {
+                        headers: { 'Authorization': 'Bearer ' + localStorage.getItem('auth') }
+                    }
+                    ).then(res => {
+                        this.info()
+                        this.dialogFormVisible1=false
+                        console.log(res);
+                        Swal.fire(res.data.msg, '', 'success')
+                    });
         },
         info() { // 获取信息
             if (!this.$store.state.user) {
@@ -238,6 +243,7 @@ export default {
                 cancelButtonText: '取消',
                 confirmButtonText: '确认删除'
             }).then((result) => {
+                console.log(this.users[index].userId);
                 if (result.isConfirmed) {
                     this.$axios.delete(
                         `/api/sys-user/delete/${this.users[index].userId}`,
