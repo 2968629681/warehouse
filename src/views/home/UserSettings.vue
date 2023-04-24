@@ -54,9 +54,9 @@
             </el-form-item>
             <el-form-item label="用户组" :label-width="formLabelWidth">
                 <el-select v-model="form.deptId" placeholder="请选择权限范围">
-                    <el-option label="XX省" value=1></el-option>
-                    <el-option label="XX市" value=11></el-option>
-                    <el-option label="XX区" value=21></el-option>
+                    <el-option label="XX省" value='1'></el-option>
+                    <el-option label="XX市" value='11'></el-option>
+                    <el-option label="XX区" value='21'></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item label="用户等级" :label-width="formLabelWidth">
@@ -296,6 +296,7 @@ export default {
         editUser(index,table) {
             console.log(index,table)
             this.form1=table[index]
+            this.form1.deptId=this.form1.deptId+''
             this.dialogFormVisible1=true;
             console.log(this.form1)
             // this.$axios.put(

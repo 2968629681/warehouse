@@ -103,7 +103,7 @@
         </div>
         </el-dialog>
 
-        <el-dialog title="修改权限" :visible.sync="dialogFormVisible2" :modal-append-to-body="false">
+        <el-dialog title="修改权限" :visible.sync="dialogFormVisible2" :modal-append-to-body="false" :close-on-click-modal="false" :show-close="false">
             <el-tree ref="tree" :props="props" node-key="menuId" :data="menu" :default-checked-keys="roles.menuIds" show-checkbox @check-change="editPermission">
             </el-tree>
             <span>数据范围:</span>
@@ -111,7 +111,7 @@
                 <option v-for="a in datascope" :key="a" :label="a">{{ a }}</option>
             </select>
         <div slot="footer" class="dialog-footer">
-            <el-button type="primary" @click="dialogFormVisible2 = false">确 定</el-button>
+            <el-button type="primary" @click="clear">确 定</el-button>
         </div>
         </el-dialog>
     </div>
@@ -148,6 +148,15 @@ export default {
         this.info();
     },
     methods: {
+        clear(){
+            this.dialogFormVisible2 = false
+            this.$refs.tree.setCheckedKeys([])
+            for (var i = 0; i < this.$refs.tree.store._getAllNodes().length; i++) {
+                this.$refs.tree.store._getAllNodes()[i].expanded = false;
+            }
+            this.datascope=["全部", " 本部门", " 本部门及以下", " 仅本人"]
+
+        },
         limits(index,roles){
             this.dialogFormVisible2 = true
             console.log(index,roles);
