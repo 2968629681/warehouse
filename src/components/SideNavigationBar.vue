@@ -54,11 +54,14 @@
   },
   created(){
     this.user = localStorage.user;
-            this.$axios.get(
-                "/api/menurole",{
-                headers: { 'Authorization': 'Bearer ' + localStorage.getItem('auth') }
-            }
-            ).then(res => this.lists=res.data.data[0].children);
+            // this.$axios.get(
+            //     "/api/menurole",{
+            //     headers: { 'Authorization': 'Bearer ' + localStorage.getItem('auth') }
+            // }
+            // ).then(res => {
+            //     console.log(res,123);
+            //     this.lists=res.data.data[0].children
+            // });
   },
     methods: {
     }

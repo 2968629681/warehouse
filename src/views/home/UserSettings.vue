@@ -12,16 +12,6 @@
         <el-table-column prop="deptName" label="用户组" width="150"/>
         <el-table-column prop="roleName" label="用户角色" width="150"/>
         <el-table-column prop="phone" label="手机号码" width="150"/>
-        
-        <el-table-column label="是否启用" width="150">
-            <template slot-scope="scope">
-                <el-switch
-                    v-model="scope.row.status"
-                    active-color="#02538C"
-                    inactive-color="#B9B9B9"
-                    disabled/>
-            </template>
-        </el-table-column>
         <el-table-column prop="createdAt" label="创建时间" width="200" />
         <el-table-column fixed="right" label="操作">
         <template slot-scope="scope">
@@ -52,20 +42,63 @@
             <el-form-item label="手机密码" :label-width="formLabelWidth">
                 <el-input v-model="form.phone" autocomplete="off"></el-input>
             </el-form-item>
-            <el-form-item label="用户组" :label-width="formLabelWidth">
+            <!-- // select框绑定的值是selectVal，也就是depts里的value -->
+            <el-form-item :label-width="formLabelWidth" label="权限范围">
+                <el-select
+                v-model="form.deptId"
+                placeholder="请选择..."
+                clearable
+                ref="select"
+                >
+                <!-- // 设置一个input框用作模糊搜索选项功能 -->
+                <el-input
+                    class="input"
+                    placeholder="此处键入'关键词'搜索查询"
+                    prefix-icon="el-icon-search"
+                    v-model="treeFilter"
+                    size="mini"
+                    clearable
+                ></el-input>
+                <!-- // 设置一个隐藏的下拉选项，选项显示的是汉字label，值是value
+                // 如果不设置一个下拉选项，下面的树形组件将无法正常使用 -->
+                <el-option hidden key="id" :value="selectVal" :label="selectName">
+                </el-option>
+                <!-- // 设置树形控件 -->
+                <el-tree
+                    :data="depts"
+                    :props="defaultProps"
+                    @node-click="handleNodeClick"
+                    :expand-on-click-node="false"
+                    :check-on-click-node="true"
+                    ref="tree"
+                    node-key="id"
+                    :default-expand-all="true"
+                    :filter-node-method="filterNode"
+                >
+                <!-- // @node-click：树形控件选项点击事件
+                // :expand-on-click-node：使树形控件只有点箭头图标的时候才会展开或者收缩节点，为false则点文字直接选中该项
+                // :check-on-click-node：是否在点击节点的时候选中节点，当选项为复选框时有用，这个属性可以删除
+                // :default-expand-all：默认展开所有节点
+                // :filter-node-method：实现搜索功能的筛选方法 -->
+                
+                    <span slot-scope="{ data }">  
+                    <!-- //选项用插槽来显示，匹配搜索功能，并方便增加tag标签需求 -->
+                    <span>{{ data.label }}</span>
+                    </span>
+                </el-tree>
+            </el-select>
+            </el-form-item>
+            
+            <!-- <el-form-item label="用户组" :label-width="formLabelWidth">
                 <el-select v-model="form.deptId" placeholder="请选择权限范围">
                     <el-option label="XX省" value='1'></el-option>
                     <el-option label="XX市" value='11'></el-option>
                     <el-option label="XX区" value='21'></el-option>
                 </el-select>
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item label="用户等级" :label-width="formLabelWidth">
                 <el-radio v-model="radio1" label="1">系统管理员</el-radio>
                 <el-radio v-model="radio1" label="2">普通用户</el-radio>
-            </el-form-item>
-            <el-form-item label="是否启用" :label-width="formLabelWidth">
-                <el-radio v-model="radio" label="1">禁用</el-radio>
-                <el-radio v-model="radio" label="2">启用</el-radio>
             </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -89,24 +122,67 @@
             <el-form-item label="手机密码" :label-width="formLabelWidth">
                 <el-input v-model="form1.phone" autocomplete="off"></el-input>
             </el-form-item>
-            <el-form-item label="用户组" :label-width="formLabelWidth">
+        <!-- // select框绑定的值是selectVal，也就是depts里的value -->
+        <el-form-item :label-width="formLabelWidth" label="权限范围">
+                <el-select
+                v-model="form.deptId"
+                placeholder="请选择..."
+                clearable
+                ref="select"
+                >
+                <!-- // 设置一个input框用作模糊搜索选项功能 -->
+                <el-input
+                    class="input"
+                    placeholder="此处键入'关键词'搜索查询"
+                    prefix-icon="el-icon-search"
+                    v-model="treeFilter"
+                    size="mini"
+                    clearable
+                ></el-input>
+                <!-- // 设置一个隐藏的下拉选项，选项显示的是汉字label，值是value
+                // 如果不设置一个下拉选项，下面的树形组件将无法正常使用 -->
+                <el-option hidden key="id" :value="selectVal" :label="selectName">
+                </el-option>
+                <!-- // 设置树形控件 -->
+                <el-tree
+                    :data="depts"
+                    :props="defaultProps"
+                    @node-click="handleNodeClick"
+                    :expand-on-click-node="false"
+                    :check-on-click-node="true"
+                    ref="tree"
+                    node-key="id"
+                    :default-expand-all="true"
+                    :filter-node-method="filterNode"
+                >
+                <!-- // @node-click：树形控件选项点击事件
+                // :expand-on-click-node：使树形控件只有点箭头图标的时候才会展开或者收缩节点，为false则点文字直接选中该项
+                // :check-on-click-node：是否在点击节点的时候选中节点，当选项为复选框时有用，这个属性可以删除
+                // :default-expand-all：默认展开所有节点
+                // :filter-node-method：实现搜索功能的筛选方法 -->
+                
+                    <span slot-scope="{ data }">  
+                    <!-- //选项用插槽来显示，匹配搜索功能，并方便增加tag标签需求 -->
+                    <span>{{ data.label }}</span>
+                    </span>
+                </el-tree>
+            </el-select>
+            </el-form-item>
+            
+            <!-- <el-form-item label="用户组" :label-width="formLabelWidth">
                 <el-select v-model="form1.deptId" placeholder="请选择权限范围">
                     <el-option label="XX省" value=1></el-option>
                     <el-option label="XX市" value=11></el-option>
                     <el-option label="XX区" value=21></el-option>
                 </el-select>
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item label="用户等级" :label-width="formLabelWidth">
                 <el-radio v-model="radio3" label="1">系统管理员</el-radio>
                 <el-radio v-model="radio3" label="2">普通用户</el-radio>
             </el-form-item>
-            <el-form-item label="是否启用" :label-width="formLabelWidth">
-                <el-radio v-model="radio2" label="1">禁用</el-radio>
-                <el-radio v-model="radio2" label="2">启用</el-radio>
-            </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
-            <el-button @click="dialogFormVisible = false">取 消</el-button>
+            <el-button @click="dialogFormVisible1 = false">取 消</el-button>
             <el-button type="primary" @click="queren1">确 定</el-button>
         </div>
         </el-dialog>
@@ -138,20 +214,49 @@ export default {
             radio:'1',
             radio1:'1',
             radio2:'1',
-            radio3:'1'
+            radio3:'1',
+            selectVal: "", // select框的绑定值
+            selectName: "", // select框显示的name
+            treeFilter: "", // 搜索框绑定值，用作过滤
+            // 树形控件数据
+            treeData: [],
+            defaultProps: {
+                children: "children",
+                label: "name",
+            },
         }
     },
+    watch: {
+    // 搜索过滤，监听input搜索框绑定的treeFilter
+    treeFilter(val) {
+      this.$refs.tree.filter(val);
+      // 当搜索框键入值改变时，将该值作为入参执行树形控件的过滤事件filterNode
+    },
+  },
     created() {
         this.info();
         this.getRoleMenu();
         this.getDeptMenu();
     },
     methods: {
+        // 结构树点击事件
+    handleNodeClick(data) {
+      this.selectVal = data.value; // select绑定值为点击的选项的value
+      this.selectName = data.label; // input中显示值为label
+      console.log(this.selectVal,this.selectName,data);
+      this.treeFilter = ""; // 点击后搜索框清空
+      this.$refs.select.blur(); // 点击后关闭下拉框，因为点击树形控件后select不会自动折叠
+    },
+    // 模糊查询（搜索过滤），实质为筛选出树形控件中符合输入条件的选项，过滤掉其他选项
+    filterNode(value, data) {
+      if (!value) return true;
+      let filterRes = data.label.indexOf(value) !== -1;
+      return filterRes;
+    },
         queren(){
-            console.log(this.value,this.radio,this.radio1,this.form);
             // this.form.userId = this.users.length + 2
-            this.form.status = this.radio
-            this.form.deptId = parseInt(this.form.deptId)
+            this.form.status = '2'
+            this.form.deptId = parseInt(this.$refs.tree.data[0].id)
             this.form.roleId = parseInt(this.radio1)
             this.$axios.post('/api/sys-user/create', this.form, {
                 headers: { 'Authorization': 'Bearer ' + localStorage.getItem('auth') }
@@ -168,6 +273,9 @@ export default {
                     this.dialogFormVisible = false
                     this.form={},
                     this.value=''
+                    this.selectVal= "", // select框的绑定值
+                    this.selectName= "", // select框显示的name
+                    this.treeFilter= "", // 搜索框绑定值，用作过滤
                     this.notifyId = this.$notify({
                         message: "新增成功",
                         duration: 2000
@@ -183,9 +291,8 @@ export default {
             })
         },
         queren1(){
-            console.log(this.form1)
-            this.form1.status = this.radio2
-            this.form1.deptId = parseInt(this.form1.deptId)
+            this.form1.status = '2'
+            this.form1.deptId = parseInt(this.$refs.tree.data[0].id)
             this.form1.roleId = parseInt(this.radio3)
             this.$axios.put(
                         "/api/sys-user/update", this.form1, {
@@ -213,15 +320,16 @@ export default {
                 url: "/api/sys-user/get",
                 headers: { 'Authorization': 'Bearer ' + localStorage.getItem('auth') }
             }).then(res => {
+                console.log(res,222);
                 this.users = res.data.data.list;
+                console.log(this.users);
                 for (var i = 0; i < this.users.length; i++) {
                     this.users[i].deptName=this.users[i].dept.deptName
-                    console.log(this.users[i].status == 2)
-                    this.users[i].createdAt=this.formatDate(this.users[i].createdAt)
+                    this.users[i].createdAt=this.dayjs(this.users[i].createdAt).format("YYYY-MM-DD HH:mm:ss")
                     if(this.users[i].status == 2){
                         this.users[i].status = true
                     }
-                    if(this.users[i].roleId === 1){
+                    if(this.users[i].roleId == 1){
                         this.users[i].roleName = '系统管理员'
                     }
                     else{
@@ -296,58 +404,11 @@ export default {
         editUser(index,table) {
             console.log(index,table)
             this.form1=table[index]
-            this.form1.deptId=this.form1.deptId+''
+            this.form1.deptId=''
             this.dialogFormVisible1=true;
             console.log(this.form1)
-            // this.$axios.put(
-            //     "/api/sys-user/update", json, {
-            //     headers: { 'Authorization': 'Bearer ' + localStorage.getItem('auth') }
-            // }
-            // ).then(res => Swal.fire(res.data.msg, '', 'success'));
-            // Swal.fire({
-            //     title: '输入信息',
-            //     html:
-            //         '用户名称<input id="username" class="swal2-input"><br>' +
-            //         '用户昵称<input id="nickname" class="swal2-input"><br>' +
-            //         '部门<input type="number" id="deptId" class="swal2-input"><br>' +
-            //         '手机号码<input type="text" id="phone" class="swal2-input"><br>' +
-            //         '用户密码<input type="password" id="password" class="swal2-input">' +
-            //         '<br>' +
-            //         '<label for="isEnable">启用</label>' +
-            //         '<input type="radio" id="swal-radio1" name="radio" default>' +
-            //         '<label for="isEnable">停用</label>' +
-            //         '<input type="radio" id="swal-radio2" name="radio">',
-            //     focusConfirm: false,
-            //     preConfirm: () => {
-            //         const json = {
-            //             "userId": index,
-            //             "username": document.querySelector('#username').value,
-            //             "nickname": document.querySelector('#nickname').value,
-            //             "deptId": parseInt(document.querySelector('#deptId').value, 10),
-            //             "phone": document.querySelector('#phone').value,
-            //             "password": document.querySelector('#password').value,
-            //             "status": document.getElementById('swal-radio1').checked ? '2' : '1',
-            //         }
-            //         this.users[index].username = json.username;
-            //         this.users[index].nickname = json.nickname;
-            //         this.users[index].deptId = json.deptId;
-            //         this.users[index].phone = json.phone;
-            //         this.users[index].password = json.password;
-            //         this.users[index].status = json.status;
-                    // this.$axios.put(
-                    //     "/api/sys-user/update", json, {
-                    //     headers: { 'Authorization': 'Bearer ' + localStorage.getItem('auth') }
-                    // }
-                    // ).then(res => Swal.fire(res.data.msg, '', 'success'));
-            //     }
-            // }).then((result) => {
-            //     if (result.value) {
-            //         Swal.fire({
-            //             title: `${result.value}`,
-            //         })
-            //     }
-            // });
-        }, formatDate(dateStr) {
+        }, 
+        formatDate(dateStr) {
             const date = new Date(dateStr);
             const year = date.getFullYear();
             const month = this.padZero(date.getMonth() + 1);
@@ -368,7 +429,6 @@ export default {
                 url: "/api/deptTree",
                 headers: { 'Authorization': 'Bearer ' + localStorage.getItem('auth') }
             }).then(res => {
-                console.log(res,5555);
                 this.depts = res.data.data;
             }).catch(() => {
             })
@@ -379,11 +439,11 @@ export default {
                 url: "/api/role/get",
                 headers: { 'Authorization': 'Bearer ' + localStorage.getItem('auth') }
             }).then(res => {
-                console.log(res.data.data.list,111)
                 this.roles = res.data.data.list;
             }).catch(() => {
             })
-        }
+        },
+        
     },
 }
 </script>
@@ -392,5 +452,8 @@ export default {
 main {
     margin-left: 140px;
 }
-
+.input {
+  width: 260px;
+  margin: 10px;
+}
 </style>

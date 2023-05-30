@@ -6,9 +6,12 @@ import axios from "axios";
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import 'default-passive-events'
+import Router from 'vue-router'
 Vue.use(Vuex).use(ElementUI);
+import dayjs from 'dayjs'
+Vue.prototype.dayjs = dayjs;
 
-axios.defaults.baseURL ='http://8.130.99.204:8080'
+axios.defaults.baseURL ='http://8.130.99.204:8080/'
 //http://8.130.99.204:8080/
 Vue.prototype.$axios = axios;
 axios.interceptors.request.use(
@@ -23,6 +26,11 @@ axios.interceptors.request.use(
   });
 
 Vue.config.productionTip = false
+
+const originalPush = Router.prototype.push
+Router.prototype.push = function push(location) {
+  return originalPush.call(this, location).catch(err => err)
+}
 
 const store = new Vuex.Store({
   state: {

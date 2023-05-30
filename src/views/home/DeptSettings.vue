@@ -3,7 +3,7 @@
         <headbar></headbar>
         <sidebar style="position:absolute"></sidebar>
         <main>
-            <div style="margin-left:140px" v-if="data">
+            <div style="margin-left:140px">
             <el-button size="mini" @click="addDept('/0/')">新建</el-button>
                 <el-table :data="data" style="width: 100%;margin-bottom: 20px;" row-key="deptId" border default-expand-all>
                     <el-table-column prop="deptName" label="用户组名称" sortable width="180">
@@ -23,6 +23,7 @@
                     </el-table-column>
                 </el-table>
             </div>
+            
         </main>
     </div>
 </template>
@@ -39,11 +40,7 @@ export default {
         sidebar
     },
     created() {
-        this.$axios.get(
-            "/api/dept/get", {
-            headers: { 'Authorization': 'Bearer ' + localStorage.getItem('auth') }
-        }
-        ).then(res => { this.data = res.data.data;})
+        this.info()
     },
     data() {
         return {
@@ -53,6 +50,16 @@ export default {
         }
     },
     methods: {
+       info(){
+        this.$axios.get(
+            "/api/dept/get", {
+            headers: { 'Authorization': 'Bearer ' + localStorage.getItem('auth') }
+          }
+          ).then(res => { 
+            this.data = res.data.data;
+            console.log(this.data);
+          })
+       },
         load(tree, treeNode, resolve) {
             setTimeout(() => {
                 resolve([
@@ -109,6 +116,7 @@ export default {
             if (result.value) {
               console.log(result.value)
             }
+            this.info()
           });
         },
         addDept(a,b){
@@ -118,11 +126,11 @@ export default {
             else {
                 deptPath=b.deptPath;
             }
-let arr=deptPath.split("/");
-let last = arr[arr.length-2]
-console.log(deptPath);
-console.log(last);
-console.log(deptPath.split("/")[3]);
+          let arr=deptPath.split("/");
+          let last = arr[arr.length-2]
+          console.log(deptPath);
+          console.log(last);
+          console.log(deptPath.split("/")[3]);
           Swal.fire({
             title: '输入信息',
             html:
@@ -145,7 +153,9 @@ console.log(deptPath.split("/")[3]);
               )
             }
           }).then((result) => {
+            this.info()
             if (result.value) {
+              this.info()
               console.log(result.value)
             }
           });
@@ -161,6 +171,7 @@ console.log(deptPath.split("/")[3]);
                         '',
                         'success'
                     )
+                    this.info()
                   }).catch(() => {
                   })
         }

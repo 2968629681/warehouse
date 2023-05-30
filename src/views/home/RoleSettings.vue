@@ -10,15 +10,6 @@
             <el-table-column prop="roleName" label="角色名称" width="150"/>
             <el-table-column prop="roleKey" label="权限字符" width="150"/>
             <el-table-column prop="roleSort" label="显示顺序" width="150"/>        
-            <el-table-column label="是否启用" width="150">
-                <template slot-scope="scope">
-                    <el-switch
-                        v-model="scope.row.status"
-                        active-color="#02538C"
-                        inactive-color="#B9B9B9"
-                        disabled/>
-                </template>
-            </el-table-column>
             <el-table-column prop="createdAt" label="创建时间" width="200" />
             <el-table-column fixed="right" label="操作">
             <template slot-scope="scope">
@@ -34,42 +25,8 @@
             </template>
             </el-table-column>
         </el-table>
-            <!-- <table border="1" cellspacing="0" style="border-color:#ededed;" v-if="roles">
-                <tr>
-                    <th>角色编号</th>
-                    <th>角色名称</th>
-                    <th>权限字符</th>
-                    <th>显示顺序</th>
-                    <th>状态</th>
-                    <th>权限</th>
-                    <th>创建时间</th>
-                    <th>操作</th>
-                </tr>
-                <tr v-for="(role, index) in roles" :key="index">
-                    <td>{{ index + 1 }}</td>
-                    <td>{{ role.roleName }}</td>
-                    <td>{{ role.roleKey }}</td>
-                    <td>{{ role.roleSort }}</td>
-                    <td><el-switch :value="role.status == '2'" @change="updateStatus(role, $event)" active-color="#13ce66"
-                            inactive-color="#ccc">
-                        </el-switch>
-                    </td>
-                    <td><el-tree ref="tree" :props="props" node-key="menuId" :data="menu" :default-checked-keys="role.menuIds" show-checkbox @check-change="editPermission(index)">
-                        </el-tree>
-                        <span>数据范围:</span>
-                        <select @change="changecope(index, $event.srcElement.selectedIndex)">
-                            <option v-for="a in datascope" :key="a" :label="a">{{ a }}</option>
-                        </select>
-                    </td>
-                    <td>{{ formatDate(role.createdAt) }}</td>
-                    <td><button @click="editName(index)">修改</button>
-                        <button @click="delRole(index)">删除角色</button>
-                        <button @click="editPermission(index)">修改权限</button>-->
-                    <!-- </td>
-                </tr>
-            </table> -->
         </main>
-        <el-dialog title="编辑角色" :visible.sync="dialogFormVisible1" :modal-append-to-body="false">
+        <el-dialog title="编辑角色" :visible.sync="dialogFormVisible1" :modal-append-to-body="false" :before-close="closeExpertFormDialog">
         <el-form :model="form">
             <el-form-item label="角色名称" :label-width="formLabelWidth">
             <el-input v-model="form.roleName" autocomplete="off"></el-input>
@@ -79,7 +36,7 @@
             </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
-            <el-button @click="dialogFormVisible = false">取 消</el-button>
+            <el-button @click="quxiao">取 消</el-button>
             <el-button type="primary" @click="queren">确 定</el-button>
         </div>
         </el-dialog>
@@ -92,10 +49,6 @@
             <el-form-item label="权限字符" :label-width="formLabelWidth">
             <el-input v-model="form1.roleKey" autocomplete="off"></el-input>
             </el-form-item>
-            <el-form-item label="是否启用" :label-width="formLabelWidth">
-                <el-radio v-model="form1.radio" label="1">禁用</el-radio>
-                <el-radio v-model="form1.radio" label="2">启用</el-radio>
-            </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
             <el-button @click="dialogFormVisible = false">取 消</el-button>
@@ -103,7 +56,7 @@
         </div>
         </el-dialog>
 
-        <el-dialog title="修改权限" :visible.sync="dialogFormVisible2" :modal-append-to-body="false" :close-on-click-modal="false" :show-close="false">
+        <el-dialog title="修改权限" :visible.sync="dialogFormVisible2" :modal-append-to-body="false" :before-close="closeExpertFormDialog1">
             <el-tree ref="tree" :props="props" node-key="menuId" :data="menu" :default-checked-keys="roles.menuIds" show-checkbox @check-change="editPermission">
             </el-tree>
             <span>数据范围:</span>
@@ -111,6 +64,7 @@
                 <option v-for="a in datascope" :key="a" :label="a">{{ a }}</option>
             </select>
         <div slot="footer" class="dialog-footer">
+            <el-button @click="quxiao1">取 消</el-button>
             <el-button type="primary" @click="clear">确 定</el-button>
         </div>
         </el-dialog>
@@ -148,6 +102,14 @@ export default {
         this.info();
     },
     methods: {
+        closeExpertFormDialog(){
+            this.form=[]
+            this.dialogFormVisible1 = false
+        },
+        quxiao(){
+            this.form=[]
+            this.dialogFormVisible1 = false
+        },
         clear(){
             this.dialogFormVisible2 = false
             this.$refs.tree.setCheckedKeys([])
@@ -155,7 +117,22 @@ export default {
                 this.$refs.tree.store._getAllNodes()[i].expanded = false;
             }
             this.datascope=["全部", " 本部门", " 本部门及以下", " 仅本人"]
-
+        },
+        quxiao1(){
+            this.dialogFormVisible2 = false
+            this.$refs.tree.setCheckedKeys([])
+            for (var i = 0; i < this.$refs.tree.store._getAllNodes().length; i++) {
+                this.$refs.tree.store._getAllNodes()[i].expanded = false;
+            }
+            this.datascope=["全部", " 本部门", " 本部门及以下", " 仅本人"]
+        },
+        closeExpertFormDialog1(){
+            this.dialogFormVisible2 = false
+            this.$refs.tree.setCheckedKeys([])
+            for (var i = 0; i < this.$refs.tree.store._getAllNodes().length; i++) {
+                this.$refs.tree.store._getAllNodes()[i].expanded = false;
+            }
+            this.datascope=["全部", " 本部门", " 本部门及以下", " 仅本人"]
         },
         limits(index,roles){
             this.dialogFormVisible2 = true
@@ -164,7 +141,7 @@ export default {
         },
         queren1(){
             console.log(this.form1);
-            this.form1.status = this.form1.radio.radio
+            this.form1.status = '2'
             this.form1.admin =this.$store.state.user
             this.$axios.post('/api/role/create', this.form1, {
                         headers: { 'Authorization': 'Bearer ' + localStorage.getItem('auth') }
@@ -196,7 +173,7 @@ export default {
             ).then(res => {
                 console.log(res);
                 Swal.fire(res.data.msg, '', 'success')
-                this.dialogFormVisible=false
+                this.dialogFormVisible1=false
                 this.info()
             }
                 );
@@ -243,6 +220,7 @@ export default {
                 url: "/api/role/get",
                 headers: { 'Authorization': 'Bearer ' + localStorage.getItem('auth') }
             }).then(res => {
+                console.log(res);
                 this.roles = res.data.data.list;
                 for (var i = 0; i < this.roles.length; i++) {
                     this.roles[i].createdAt=this.formatDate(this.roles[i].createdAt)
